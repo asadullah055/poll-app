@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-const AuthInput = ({ label, type, name, placeholder }) => {
+const AuthInput = ({ label, type, name, placeholder, value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -18,6 +18,8 @@ const AuthInput = ({ label, type, name, placeholder }) => {
           name={name}
           placeholder={placeholder}
           id={label}
+          value={value}
+          onChange={onChange}
         />
         {type === "password" && (
           <>

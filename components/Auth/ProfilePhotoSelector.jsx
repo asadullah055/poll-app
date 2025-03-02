@@ -1,27 +1,31 @@
 "use client";
+
 import { useRef, useState } from "react";
 import { LuTrash, LuUpload, LuUser } from "react-icons/lu";
-const ProfilePhotoSelector = () => {
-  const [image, setImage] = useState("");
+
+const ProfilePhotoSelector = ({ profileImage, setImage }) => {
   const inputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file);
-      const preview = URL.createObjectURL(file);
-      setPreviewUrl(preview);
+      setImage(file); // Send the file directly to the parent
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
+
   const handleRemoveImage = () => {
     setImage(null);
     setPreviewUrl(null);
   };
+
   const onChooseFile = () => {
     inputRef.current.click();
   };
+
   return (
-    <div className="flex justify-center mb-6">
+    <div className="flex flex-col items-center justify-center mb-6">
       <input
         type="file"
         accept="image/*"
@@ -30,7 +34,8 @@ const ProfilePhotoSelector = () => {
         onChange={handleImageChange}
         className="hidden"
       />
-      {!image ? (
+
+      {!previewUrl ? (
         <div className="w-20 h-20 flex items-center justify-center bg-blue-100 rounded-full relative">
           <LuUser className="text-4xl text-primary" />
           <button
@@ -56,6 +61,9 @@ const ProfilePhotoSelector = () => {
             <LuTrash />
           </button>
         </div>
+      )}
+      {profileImage && (
+        <p className="text-xs text-red-600 mt-4">{profileImage}</p>
       )}
     </div>
   );

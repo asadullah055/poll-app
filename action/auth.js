@@ -1,0 +1,68 @@
+"use server";
+
+import cloudinary from "@/lib/cloudinary";
+import { userSchema } from "@/lib/definitions";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
+const prisma = new PrismaClient();
+
+export async function signup(state, formData) {
+  const validatedFields = userSchema.safeParse(formData);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { fullname, email, username, password, profileImage } = validatedFields.data;
+
+  const exitEmail = await prisma.users.findFirst({
+    where: { email: email },
+  });
+  const exitUsername = await prisma.users.findFirst({
+    where: { username: username },
+  });
+
+  if (exitEmail) {
+    return { errors: { email: ["Email already exists"] } };
+  }
+  if (exitUsername) {
+    return { errors: { username: ["Username already exists"] } };
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  let profileImageUrl = null;
+
+  if (profileImage) {
+    try {
+      // Convert File to Base64
+      const arrayBuffer = await profileImage.arrayBuffer();
+      const base64String = Buffer.from(arrayBuffer).toString("base64");
+      const dataUri = `data:${profileImage.type};base64,${base64String}`;
+
+      // Upload the image to Cloudinary
+      const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+        folder: "poll_app",
+      });
+
+      profileImageUrl = uploadResponse.secure_url;
+    } catch (error) {
+      console.log(error);
+      return { errors: { profileImage: ["Error uploading image"] } };
+    }
+  }
+
+  await prisma.users.create({
+    data: {
+      fullname,
+      email,
+      username,
+      password: hashedPassword,
+      profileImage: profileImageUrl,
+    },
+  });
+
+  return { success: true, message:'Create Account Success' };
+}
