@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-poppins);
+  --color-gray: #f7f7f7;
+  --color-green: #1fa868;
+  --shadow-rounded: shadow-[rgba(17, _17, _26, _0.1) _0px_0px_16px];
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-poppins), sans-serif;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .input-box {
+    @apply w-full flex justify-between flex-col gap-3 text-black rounded outline-none;
+  }
+}
