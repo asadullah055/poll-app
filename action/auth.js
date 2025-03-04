@@ -1,12 +1,12 @@
 "use server";
 
 import cloudinary from "@/lib/cloudinary";
-import { userSchema } from "@/lib/definitions";
+import { loginSchema, userSchema } from "@/lib/definitions";
+import { createSession, deleteSession } from "@/lib/session";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-
+import { redirect } from "next/navigation";
 const prisma = new PrismaClient();
-
 export async function signup(state, formData) {
   const validatedFields = userSchema.safeParse(formData);
 
@@ -16,7 +16,8 @@ export async function signup(state, formData) {
     };
   }
 
-  const { fullname, email, username, password, profileImage } = validatedFields.data;
+  const { fullname, email, username, password, profileImage } =
+    validatedFields.data;
 
   const exitEmail = await prisma.users.findFirst({
     where: { email: email },
@@ -64,5 +65,39 @@ export async function signup(state, formData) {
     },
   });
 
-  return { success: true, message:'Create Account Success' };
+  return { success: true, message: "Create Account Success" };
+}
+
+export async function login(state, formData) {
+  const validatedFields = loginSchema.safeParse(formData);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { email, password, remember } = validatedFields.data;
+
+  try {
+    const user = await prisma.users.findFirst({
+      where: { email: email },
+    });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return { errors: { auth: ["Invalid email or password"] } };
+    }
+
+    await createSession(user.id);
+
+    return { success: true, message: "Login successful" };
+  } catch (error) {
+    console.error("Login error:", error);
+    return { errors: { server: ["Internal server error"] } };
+  }
+}
+
+export async function logout() {
+ await deleteSession();
+  redirect("/login");
 }

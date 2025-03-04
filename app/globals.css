@@ -18,4 +18,7 @@ body {
   .input-box {
     @apply w-full flex justify-between flex-col gap-3 text-black rounded outline-none;
   }
+  .bg-primary {
+    @apply bg-teal-700 text-white;
+  }
 }
