@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,14 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  fullname     String
-  email        String   @unique
-  username     String   @unique
-  password     String
-  profileImage String?
-  otp          String   @default("0")
+model User {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullname        String
+  username        String
+  email           String   @unique
+  password        String
+  profileImage    String?
+  otp             String   @default("0")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  pollId          Poll     @relation("bookMark", fields: [bookmarkedPolls], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  bookmarkedPolls String[] @default([]) @db.ObjectId
+  createBy        Poll[]   @relation("UserPolls")
+  voteBy          Poll[]   @relation("votedBy")
+}
+
+model Poll {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+  type      String
+  options   Options[]
+  responses Responses[]
+  closed    Boolean     @default(false)
+
+  creator    User     @relation("UserPolls", fields: [createById], references: [id])
+  createById String   @db.ObjectId
+  voters     User?    @relation("votedBy", fields: [votersId], references: [id])
+  votersId   String[] @db.ObjectId
+  User       User[]   @relation("bookMark")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+type Options {
+  optionText String?
+  votes      Int?    @default(0)
+}
+
+type Responses {
+  useId        String   @db.ObjectId
+  responseText String?  @default("")
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
 }

@@ -1,3 +1,4 @@
+"use client";
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiMiniPlus } from "react-icons/hi2";
 
@@ -5,19 +6,14 @@ const OptionImageSelector = ({ imageList, setImageList }) => {
   const handleAddImage = (e) => {
     const file = e.target.files[0];
     if (file && imageList.length < 4) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageList([...imageList, { base64: reader.result, file }]);
-      };
-      reader.readAsDataURL(file);
-      e.target.value = null;
+      setImageList([...imageList, file]);
     }
   };
 
   const handleDeleteImage = (index) => {
-    const updatedArr = imageList.filter((_, idx) => idx !== index);
-    setImageList(updatedArr);
+    setImageList(imageList.filter((_, idx) => idx !== index));
   };
+
   return (
     <div>
       {imageList.length > 0 && (
@@ -25,7 +21,7 @@ const OptionImageSelector = ({ imageList, setImageList }) => {
           {imageList.map((item, index) => (
             <div key={index} className="bg-gray-600/10 rounded-md relative">
               <img
-                src={item.base64}
+                src={URL.createObjectURL(item)}
                 alt={`selected_${index}`}
                 className="w-full h-36 object-contain rounded-md"
               />
@@ -43,7 +39,7 @@ const OptionImageSelector = ({ imageList, setImageList }) => {
         <div className="flex items-center gap-5">
           <input
             type="file"
-            accept="image/jpeg, image/png"
+            accept="image/jpeg, image/png, image/jpg"
             onChange={handleAddImage}
             className="hidden"
             id="imageInput"

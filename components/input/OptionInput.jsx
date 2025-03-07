@@ -2,9 +2,12 @@
 import { useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiMiniPlus } from "react-icons/hi2";
+
 const OptionInput = ({ optionList, setOptionList }) => {
   const [option, setOption] = useState("");
-  const handleAddOption = () => {
+
+  const handleAddOption = (e) => {
+    e.preventDefault();
     if (option.trim() && optionList.length < 4) {
       setOptionList([...optionList, option.trim()]);
       setOption("");
@@ -12,12 +15,11 @@ const OptionInput = ({ optionList, setOptionList }) => {
   };
 
   const handleDeleteOption = (index) => {
-    const updatedArr = optionList.filter((_, idx) => idx !== index);
-    setOptionList(updatedArr);
+    setOptionList(optionList.filter((_, idx) => idx !== index));
   };
 
   return (
-    <div className="">
+    <div>
       {optionList.map((item, index) => (
         <div
           key={index}
@@ -35,12 +37,12 @@ const OptionInput = ({ optionList, setOptionList }) => {
             type="text"
             placeholder="Enter option"
             value={option}
-            onChange={({ target }) => setOption(target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAddOption()}
+            onChange={(e) => setOption(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddOption(e)}
             className="w-full text-[13px] text-black outline-none bg-gray-200/80 px-3 py-[6px] rounded-md"
           />
           <button
-            className="btn-small text-nowrap py-[6x]"
+            className="btn-small text-nowrap py-[6px]"
             onClick={handleAddOption}
           >
             <HiMiniPlus className="text-lg" /> Add Option

@@ -19,10 +19,10 @@ export async function signup(state, formData) {
   const { fullname, email, username, password, profileImage } =
     validatedFields.data;
 
-  const exitEmail = await prisma.users.findFirst({
+  const exitEmail = await prisma.user.findFirst({
     where: { email: email },
   });
-  const exitUsername = await prisma.users.findFirst({
+  const exitUsername = await prisma.user.findFirst({
     where: { username: username },
   });
 
@@ -55,7 +55,7 @@ export async function signup(state, formData) {
     }
   }
 
-  await prisma.users.create({
+  await prisma.user.create({
     data: {
       fullname,
       email,
@@ -80,7 +80,7 @@ export async function login(state, formData) {
   const { email, password, remember } = validatedFields.data;
 
   try {
-    const user = await prisma.users.findFirst({
+    const user = await prisma.user.findUnique({
       where: { email: email },
     });
 
