@@ -88,16 +88,57 @@ export async function login(state, formData) {
       return { errors: { auth: ["Invalid email or password"] } };
     }
 
+    const totalPollsCreated = await prisma.poll.count({
+      select: { createById: true },
+    });
+    const totalPollsVote = await prisma.poll.count({
+      select: { votersId: true },
+    });
+
+    const totalBookmarkedPolls = user.bookmarkedPolls.length;
+
     await createSession(user.id);
 
-    return { success: true, message: "Login successful" };
+    return {
+      success: true,
+      message: "Login successful",
+      user: {
+        totalPollsCreated,
+        totalPollsVote,
+        totalBookmarkedPolls,
+      },
+    };
   } catch (error) {
     console.error("Login error:", error);
     return { errors: { server: ["Internal server error"] } };
   }
 }
 
+/* export async function userInfo (id) {
+  const user = await prisma.user.findUnique({where:id},);
+  if (!user) {
+    return res.status(400).json({ message: "user not found" });
+  }
+  const totalPollsCreated = await Poll.countDocuments({ creator: user._id });
+  const totalPollsVote = await Poll.countDocuments({ voters: user._id });
+  const totalBookmarkedPolls = user.bookmarkedPolls.length;
+  try {
+    const userInfo = {
+      ...user.toObject(),
+      totalPollsCreated,
+      totalPollsVote,
+      totalBookmarkedPolls,
+    };
+    res.status(200).json(userInfo);
+  } catch (err) {
+    res.status(500).json({
+      message: "Error login user",
+      error: err.message,
+    });
+  }
+}; */
+
 export async function logout() {
- await deleteSession();
+  await deleteSession();
   redirect("/login");
 }

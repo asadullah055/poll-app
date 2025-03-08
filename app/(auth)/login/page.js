@@ -15,7 +15,7 @@ const LoginPage = () => {
     remember: false,
   });
   const [state, action, pending] = useActionState(login, undefined);
-  console.log(state);
+  console.log("state", state);
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;

@@ -23,7 +23,6 @@ const ProfilePhotoSelector = ({ profileImage, setImage }) => {
   const onChooseFile = () => {
     inputRef.current.click();
   };
-
   return (
     <div className="flex flex-col items-center justify-center mb-6">
       <input
