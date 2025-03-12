@@ -5,8 +5,7 @@ import { getAllPolls } from "@/query";
 
 export default async function Home() {
   const  user  = await getUser();
-  const { polls, stats } = await getAllPolls({user});
-
+  const { polls, stats } = await getAllPolls({});
 
   return (
     <DashboardLayout user={user} stats={stats}>

@@ -12,7 +12,7 @@ export async function getAllPolls({ user, type, page = 1, limit = 10 }) {
     const filter = {};
 
     if (type) filter.type = type;
-    if (user) filter.createById = user.id;
+    if (user) filter.createById = user.user.id;
     const pageNumber = parseInt(page, 10);
     const pageSize = parseInt(limit, 10);
     const skip = (pageNumber - 1) * pageSize;
@@ -93,17 +93,16 @@ export async function getAllPolls({ user, type, page = 1, limit = 10 }) {
 }
 export async function getVotedPolls({ user, type, page = 1, limit = 10 }) {
   try {
-    // const user = await getUser();
+    const authUser = await getUser();
     const filter = {};
 
     if (type) filter.type = type;
-    if (user) filter.createById = user.id;
     const pageNumber = parseInt(page, 10);
     const pageSize = parseInt(limit, 10);
     const skip = (pageNumber - 1) * pageSize;
 
     const polls = await prisma.poll.findMany({
-      where: { createById: user.id },
+      where: { votersId: { has: authUser.user.id } },
       include: {
         creator: {
           select: {
@@ -115,7 +114,7 @@ export async function getVotedPolls({ user, type, page = 1, limit = 10 }) {
         },
         responses: {
           include: {
-            user: {
+            voter: {
               select: { fullname: true, username: true, profileImage: true },
             },
           },
@@ -124,13 +123,17 @@ export async function getVotedPolls({ user, type, page = 1, limit = 10 }) {
       skip,
       take: pageSize,
     });
+
     const updatedPolls = polls.map((poll) => {
-      const userHasVoted = poll.votersId.some((voterId) => voterId === user.id);
+      const userHasVoted = poll.votersId.some(
+        (voter) => voter === authUser?.user.id
+      );
       return {
         ...poll,
         userHasVoted,
       };
     });
+    const totalPolls = await prisma.poll.count({ where: filter });
     const totalVotedPolls = await prisma.poll.count({
       where: { createById: user.id },
     });
@@ -147,9 +150,6 @@ export async function getVotedPolls({ user, type, page = 1, limit = 10 }) {
   }
 }
 export async function getPollById(id) {
-
-
-
   try {
     const poll = await prisma.poll.findUnique({
       where: { id: id },
@@ -179,49 +179,87 @@ export async function getPollById(id) {
   }
 }
 export async function getBookmarkedPolls(id) {
+  // const authUser = await getUser();
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: id },
+      select: {
+        bookmarkedPolls: true,
+      },
+    });
+
+    if (!user) {
+      return { message: "User not found" };
+    }
+
+    const polls = await prisma.poll.findMany({
+      where: {
+        id: { in: user.bookmarkedPolls },
+      },
       include: {
-        pollId: {
+        creator: {
           select: {
-            creator: {
-              select: {
-                fullname: true,
-                username: true,
-                profileImage: true,
-              },
-            },
+            fullname: true,
+            email: true,
+            username: true,
+            profileImage: true,
           },
         },
         responses: {
-          select: {
+          include: {
             voter: {
-              select: {
-                fullname: true,
-                username: true,
-                profileImage: true,
-              },
+              select: { fullname: true, username: true, profileImage: true },
             },
           },
         },
       },
     });
-    if (!user) {
-      return { message: "user not found" };
-    }
-
-    const bookmarkPolls = user.bookmarkedPolls.map((poll) => {
-      const userHasVoted = poll.voters.some((voter) => voter.id === id);
+    const updatedPolls = polls.map((poll) => {
+      const userHasVoted = poll.votersId.some(
+        (voter) => voter === id
+      );
       return {
         ...poll,
         userHasVoted,
       };
     });
 
-    return bookmarkPolls;
+    return {polls:updatedPolls}
+
   } catch (error) {
-    console.error("Error fetching polls:", error);
+    console.error("Error fetching bookmarked polls:", error);
     return [];
   }
 }
+
+/* export async function getBookmarkedPolls(id) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        bookmarkedPolls: true, 
+      },
+    });
+
+    if (!user) {
+      return { message: "User not found" };
+    }
+
+    const polls = await prisma.poll.findMany({
+      where: {
+        id: { in: user.bookmarkedPolls },
+      },
+      include: {
+        creator: {
+          select: { fullname: true, profileImage: true, username: true },
+        },
+      },
+    });
+    
+    return {polls: updatedPolls};
+  } catch (error) {
+    console.error("Error fetching bookmarked polls:", error);
+    return [];
+  }
+} */

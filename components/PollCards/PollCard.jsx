@@ -1,3 +1,4 @@
+"use client";
 import {
   bookmarkPoll,
   closePollById,
@@ -121,8 +122,7 @@ const PollCard = ({
     }
   };
   return (
-    !pollDeleted &&
-    !pollClose && (
+    !pollDeleted && (
       <div className="bg-slate-100/50 my-5 p-5 rounded-lg border border-slate-100 mx-auto">
         <div className="flex items-center justify-between">
           <UserProfileInfo

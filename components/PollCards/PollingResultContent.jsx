@@ -71,7 +71,7 @@ const PollingResultContent = ({ type, options, voter, response }) => {
         <div className="grid grid-cols-2 gap-4">
           {options.map((option, index) => (
             <ImagePollResult
-              key={option._id}
+              key={index}
               imgUrl={option.optionText || ""}
               optionVotes={option.votes}
               totalVotes={voter || 0}
@@ -81,9 +81,9 @@ const PollingResultContent = ({ type, options, voter, response }) => {
       );
 
     case "open-ended":
-      return response.map((item) => (
+      return response.map((item, i) => (
         <OpenEndedPollResponse
-          key={item._id}
+          key={i}
           profileImgUrl={item.voterId?.profileImageUrl}
           userFullName={item.voterId?.fullName || "Asadullah Ahmed"}
           response={item.responseText || ""}

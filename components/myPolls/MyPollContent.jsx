@@ -1,11 +1,10 @@
 "use client";
-
 import { getAllPolls } from "@/query";
 import { useEffect, useState } from "react";
-import HeaderWithFilter from "../layout/HeaderWithFilter";
 import PollCard from "../PollCards/PollCard";
+import HeaderWithFilter from "../layout/HeaderWithFilter";
 
-const HomeContent = ({ user }) => {
+const MyPollContent = ({ user }) => {
   const [allPolls, setAllPolls] = useState([]);
   const [stats, setStats] = useState([]);
   const [page, setPage] = useState(1);
@@ -16,7 +15,7 @@ const HomeContent = ({ user }) => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await getAllPolls({});
+      const response = await getAllPolls({ user });
       setAllPolls(response.polls);
     } catch (error) {
       console.log(error);
@@ -29,7 +28,6 @@ const HomeContent = ({ user }) => {
     fetchAllPolls();
     return () => {};
   }, [filterType]);
-
   return (
     <div className="my-5 mx-auto">
       <HeaderWithFilter
@@ -60,4 +58,4 @@ const HomeContent = ({ user }) => {
   );
 };
 
-export default HomeContent;
+export default MyPollContent;
