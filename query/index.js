@@ -179,7 +179,6 @@ export async function getPollById(id) {
   }
 }
 export async function getBookmarkedPolls(id) {
-  // const authUser = await getUser();
 
   try {
     const user = await prisma.user.findUnique({
