@@ -84,15 +84,17 @@ export async function login(state, formData) {
       where: { email: email },
     });
 
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return { errors: { auth: ["Invalid email or password"] } };
     }
 
     const totalPollsCreated = await prisma.poll.count({
-      select: { createById: true },
+      where: { createById: user.id },
     });
+    
     const totalPollsVote = await prisma.poll.count({
-      select: { votersId: true },
+      where: { votersId: { has: user.id } }, 
     });
 
     const totalBookmarkedPolls = user.bookmarkedPolls.length;
@@ -109,7 +111,7 @@ export async function login(state, formData) {
       },
     };
   } catch (error) {
-    console.error("Login error:", error);
+    console.log("Login error:", error);
     return { errors: { server: ["Internal server error"] } };
   }
 }

@@ -1,12 +1,14 @@
 "use server";
 
+import { getUser } from "@/lib/dal";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function getAllPolls({ user, type, page = 1, limit = 10 }) {
   try {
-    // const user = await getUser();
+    const authUser = await getUser();
+
     const filter = {};
 
     if (type) filter.type = type;
@@ -28,8 +30,12 @@ export async function getAllPolls({ user, type, page = 1, limit = 10 }) {
         },
         responses: {
           include: {
-            user: {
-              select: { fullname: true, username: true, profileImage: true },
+            voter: {
+              select: {
+                fullname: true,
+                username: true,
+                profileImage: true,
+              },
             },
           },
         },
@@ -38,13 +44,17 @@ export async function getAllPolls({ user, type, page = 1, limit = 10 }) {
       take: pageSize,
       orderBy: { createdAt: "desc" },
     });
+
     const updatedPolls = polls.map((poll) => {
-      const userHasVoted = poll.votersId.some((voterId) => voterId === user.id);
+      const userHasVoted = poll.votersId.some(
+        (voter) => voter === authUser?.user.id
+      );
       return {
         ...poll,
         userHasVoted,
       };
     });
+
     const totalPolls = await prisma.poll.count({ where: filter });
     const stats = await prisma.poll.groupBy({
       by: ["type"],
@@ -137,6 +147,9 @@ export async function getVotedPolls({ user, type, page = 1, limit = 10 }) {
   }
 }
 export async function getPollById(id) {
+
+
+
   try {
     const poll = await prisma.poll.findUnique({
       where: { id: id },
@@ -149,7 +162,7 @@ export async function getPollById(id) {
         },
         responses: {
           include: {
-            user: {
+            voter: {
               select: { fullname: true, username: true, profileImage: true },
             },
           },
@@ -197,7 +210,7 @@ export async function getBookmarkedPolls(id) {
     if (!user) {
       return { message: "user not found" };
     }
-    
+
     const bookmarkPolls = user.bookmarkedPolls.map((poll) => {
       const userHasVoted = poll.voters.some((voter) => voter.id === id);
       return {

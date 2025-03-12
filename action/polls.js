@@ -99,12 +99,12 @@ export async function createPoll(state, formData) {
     };
   }
 }
-export async function voteOnPoll(state, formData) {
-  const { optionIndex, voterId, responseText, id } = formData;
+export async function voteOnPoll(id, formData) {
+  const { optionIndex, voterId, responseText } = formData;
 
   try {
     const poll = await prisma.poll.findUnique({
-      where: { id },
+      where: { id: id },
       include: { responses: true },
     });
 
@@ -160,7 +160,7 @@ export async function voteOnPoll(state, formData) {
         },
       },
     });
-
+    revalidatePath("/");
     return { message: "Voted successfully" };
   } catch (err) {
     console.log(err);
@@ -171,25 +171,49 @@ export async function voteOnPoll(state, formData) {
   }
 }
 
-export async function closePoll(state, formData) {
-  const { id, userId } = formData;
-
+export async function closePollById(pollId, userId) {
   try {
-    const poll = await prisma.poll.findUnique({ where: { id } });
+    const poll = await prisma.poll.findUnique({ where: { id: pollId } });
 
     if (!poll) {
       return { message: "Poll not found" };
     }
 
-    if (poll.creatorId !== userId) {
+    if (poll.createById !== userId) {
       return { message: "You are not authorized to close this poll." };
     }
 
     await prisma.poll.update({
-      where: { id },
+      where: { id: pollId },
       data: { closed: true },
     });
+    revalidatePath("/");
+    return { message: "Poll closed successfully" };
+  } catch (err) {
+    console.error(err);
+    return {
+      message: "Error closing poll",
+      error: err.message,
+    };
+  }
+}
+export async function openPollById(pollId, userId) {
+  try {
+    const poll = await prisma.poll.findUnique({ where: { id: pollId } });
 
+    if (!poll) {
+      return { message: "Poll not found" };
+    }
+
+    if (poll.createById !== userId) {
+      return { message: "You are not authorized to close this poll." };
+    }
+
+    await prisma.poll.update({
+      where: { id: pollId },
+      data: { closed: false },
+    });
+    revalidatePath("/");
     return { message: "Poll closed successfully" };
   } catch (err) {
     console.error(err);
@@ -200,39 +224,37 @@ export async function closePoll(state, formData) {
   }
 }
 
-export async function bookmarkPoll(state, formData) {
-  const { id, userId } = formData;
-
+export async function bookmarkPoll(pollId, userId) {
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       return { message: "User not found" };
     }
 
-    const isBookmarked = user.bookmarkedPolls.includes(id);
+    const isBookmarked = user.bookmarkedPolls.includes(pollId);
 
     if (isBookmarked) {
       const updatedBookmarks = user.bookmarkedPolls.filter(
-        (pollId) => pollId !== id
+        (Id) => Id !== pollId
       );
 
       await prisma.user.update({
         where: { id: userId },
         data: { bookmarkedPolls: updatedBookmarks },
       });
-
+      revalidatePath("/");
       return {
         message: "Poll removed from bookmarks",
         bookmarkedPolls: updatedBookmarks,
       };
     }
 
-    const updatedBookmarks = [...user.bookmarkedPolls, id];
+    const updatedBookmarks = [...user.bookmarkedPolls, pollId];
     await prisma.user.update({
       where: { id: userId },
       data: { bookmarkedPolls: updatedBookmarks },
     });
-
+    revalidatePath("/");
     return {
       message: "Poll bookmarked successfully",
       bookmarkedPolls: updatedBookmarks,
@@ -241,6 +263,30 @@ export async function bookmarkPoll(state, formData) {
     console.error(err);
     return {
       message: "Error bookmarking poll",
+      error: err.message,
+    };
+  }
+}
+export async function deletePollById(pollId, userId) {
+  try {
+    const poll = await prisma.poll.findUnique({ where: { id: pollId } });
+
+    if (!poll) {
+      return { message: "Poll not found" };
+    }
+
+    if (poll.createById !== userId) {
+      return { message: "You are not authorized to close this poll." };
+    }
+    await prisma.poll.delete({
+      where:{id: pollId}
+    });
+    revalidatePath("/");
+
+    return { message: "Poll closed successfully" };
+  } catch (err) {
+    return {
+      message: "Error closing poll",
       error: err.message,
     };
   }

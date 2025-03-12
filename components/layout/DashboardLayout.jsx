@@ -19,8 +19,8 @@ const DashboardLayout = async ({ children, user, stats }) => {
               fullName={user.user?.fullname}
               username={user.user?.username}
               totalBookmarkedPolls={user?.totalBookmarkedPolls || 0}
-              totalPollsCreated={user?.totalPollsCreated?.createById || 0}
-              totalPollsVote={user?.totalPollsVote?.votersId || 0}
+              totalPollsCreated={user?.totalPollsCreated || 0}
+              totalPollsVote={user?.totalPollsVote || 0}
             />
             {stats?.length > 0 && <TreadingPolls stats={stats} />}
           </div>

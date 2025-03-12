@@ -33,6 +33,7 @@ const SideMenu = () => {
           <Link
             key={item.id}
             href={item.path}
+            prefetch={true}
             className={`flex w-full items-center gap-4 text-[15px] py-4 px-6 mb-3 rounded-full transition-colors ${
               isActive ? "bg-blue-500 text-white" : "hover:bg-gray-200"
             }`}
