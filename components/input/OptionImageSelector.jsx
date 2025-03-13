@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiMiniPlus } from "react-icons/hi2";
 
@@ -20,7 +21,9 @@ const OptionImageSelector = ({ imageList, setImageList }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           {imageList.map((item, index) => (
             <div key={index} className="bg-gray-600/10 rounded-md relative">
-              <img
+              <Image
+                width={200}
+                height={200}
                 src={URL.createObjectURL(item)}
                 alt={`selected_${index}`}
                 className="w-full h-36 object-contain rounded-md"

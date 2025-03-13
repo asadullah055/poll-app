@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { LuTrash, LuUpload, LuUser } from "react-icons/lu";
 
@@ -47,7 +48,9 @@ const ProfilePhotoSelector = ({ profileImage, setImage }) => {
         </div>
       ) : (
         <div className="relative">
-          <img
+          <Image
+            width={200}
+            height={200}
             src={previewUrl}
             alt="profile photo"
             className="w-20 h-20 rounded-full object-cover"

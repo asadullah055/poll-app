@@ -5,7 +5,8 @@
   --color-gray: #f7f7f7;
   --color-green: #1fa868;
   /* --color-primary: #349996; */
-  --color-primary: #189ab4;
+  /* --color-primary: #189ab4; */
+  --color-primary: #0d5f72;
   --color-secondary: #ef863e;
   --shadow-rounded: shadow-[rgba(17, _17, _26, _0.1) _0px_0px_16px];
 }
@@ -31,7 +32,7 @@ body {
     @apply flex items-center gap-1 text-xs font-medium bg-primary text-white hover:bg-sky-200/60 hover:text-primary rounded px-3 py-[4px];
   }
   .icon-btn {
-    @apply text-[20px] text-slate-300 cursor-pointer hover:text-primary;
+    @apply text-[20px] text-primary cursor-pointer hover:text-primary;
   }
   .info-text {
     @apply text-sm text-primary font-medium text-center p-3 bg-gray-100 rounded-lg;

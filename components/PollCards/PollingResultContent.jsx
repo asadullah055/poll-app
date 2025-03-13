@@ -1,16 +1,17 @@
 import moment from "moment";
+import Image from "next/image";
 const PollOptionVoteResult = ({ label, optionVotes, totalVotes }) => {
   const progress =
     totalVotes > 0 ? Math.round((optionVotes / totalVotes) * 100) : 0;
 
   return (
-    <div className="w-full bg-slate-200/80 rounded-md h-6 relative mb-3">
+    <div className="w-full bg-[#E6ECF3] rounded-md h-6 relative mb-3">
       <div
         className="bg-sky-900/10 h-6 rounded-md"
         style={{ width: `${progress}%` }}
       ></div>
       <span className="absolute inset-0 flex items-center justify-between text-gray-800 text-[12px] font-medium mx-4">
-        {label} <span className="text-[11px] text-slate-500">{progress}%</span>
+        {label} <span className="text-[11px] text-[#444A60]">{progress}%</span>
       </span>
     </div>
   );
@@ -19,7 +20,13 @@ const ImagePollResult = ({ imgUrl, optionVotes, totalVotes }) => {
   return (
     <div className="">
       <div className="w-full bg-gray-800 flex items-center gap-2 mb-4 rounded-md overflow-hidden">
-        <img src={imgUrl} alt="" className="w-full h-36 object-contain" />
+        <Image
+          src={imgUrl}
+          alt="poll image"
+          width={200}
+          height={100}
+          className="w-full h-36 object-contain"
+        />
       </div>
       <PollOptionVoteResult optionVotes={optionVotes} totalVotes={totalVotes} />
     </div>
@@ -35,7 +42,13 @@ const OpenEndedPollResponse = ({
     <div className="mb-8 ml-3">
       <div className="flex gap-3 items-center">
         {profileImgUrl && (
-          <img src={profileImgUrl} alt="" className="w-8 h-8 rounded-full" />
+          <Image
+            src={profileImgUrl}
+            alt=""
+            height={100}
+            width={100}
+            className="rounded-full"
+          />
         )}
 
         <p className="text-[13px] text-black">

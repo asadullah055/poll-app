@@ -42,7 +42,7 @@ const PollActions = ({
       )}
       {isMyPoll && (
         <button
-          className="btn-small text-red-500 bg-red-500/10 hover:bg-red-500 hover:text-white hover:border-orange-100"
+          className="btn-small text-[#AF040E] bg-[#FFFAFA] hover:bg-red-500 hover:text-white hover:border-orange-100"
           onClick={onDelete}
           disabled={loading}
         >

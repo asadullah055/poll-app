@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const StatusInfo = ({ label, value }) => {
   return (
     <div className="text-center">
@@ -21,7 +23,9 @@ const UserDetailsCard = ({
         <div className="absolute -bottom-10 rounded-full overflow-hidden border-2 border-primary">
           {
             profileImageUrl && (
-              <img
+              <Image
+                height={200}
+                width={200}
                 src={profileImageUrl || ""}
                 alt="profile image"
                 className="w-20 h-20 bg-slate-400 rounded-full"
@@ -38,9 +42,9 @@ const UserDetailsCard = ({
       </div>
       <div className="mt-12 px-5">
         <div className="text-center pt-1">
-          <h5 className="text-lg text-gray-950 font-medium leading-6">
+          <h2 className="text-lg text-gray-950 font-medium leading-6">
             {fullName}
-          </h5>
+          </h2>
           <span className="text-[13px] font-medium text-slate-700/60">
             @{username}
           </span>

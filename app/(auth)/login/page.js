@@ -25,20 +25,22 @@ const LoginPage = () => {
   };
   useEffect(() => {
     if (state?.success) {
+      router.push("/");
       toast.success(state?.message);
       setFormData({
         email: "",
         password: "",
         remember: false,
       });
-      router.push("/");
     } else if (state?.errors?.auth) {
       toast.error(state.errors.auth);
     } else if (state?.errors?.server) {
       toast.error(state.errors.server);
     }
   }, [state, router]);
-
+  useEffect(() => {
+    router.prefetch("/");
+  }, []);
   return (
     <div className="bg-white p-4 rounded-md">
       <h2 className="text-2xl mb-3 font-semibold p-2 rounded text-center">
