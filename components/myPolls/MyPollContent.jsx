@@ -1,41 +1,40 @@
 "use client";
-import { getAllPolls } from "@/query";
-import { useEffect, useState } from "react";
+
+import { fetchFilteredPolls } from "@/query";
+import { useState, useTransition } from "react";
+import { LuPenTool } from "react-icons/lu";
 import PollCard from "../PollCards/PollCard";
+import EmptyCard from "../cards/EmptyCard";
 import HeaderWithFilter from "../layout/HeaderWithFilter";
 
-const MyPollContent = ({ user }) => {
-  const [allPolls, setAllPolls] = useState([]);
-  const [stats, setStats] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
+const MyPollContent = ({ user, initialPolls }) => {
+  const [polls, setPolls] = useState(initialPolls);
   const [filterType, setFilterType] = useState("");
-  const fetchAllPolls = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await getAllPolls({ user });
-      setAllPolls(response.polls);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  const [isPending, startTransition] = useTransition();
+
+  const handleFilterChange = (newFilter) => {
+    setFilterType(newFilter);
+    startTransition(async () => {
+      const filteredData = await fetchFilteredPolls(user, newFilter);
+      setPolls(filteredData.polls);
+    });
   };
-  useEffect(() => {
-    // setPage(1);
-    fetchAllPolls();
-    return () => {};
-  }, [filterType]);
   return (
     <div className="my-5 mx-auto">
       <HeaderWithFilter
-        title="Poll"
+        title="My Polls"
         filterType={filterType}
-        setFilterType={setFilterType}
+        setFilterType={handleFilterChange}
       />
-      {allPolls?.map((poll) => (
+      {polls.length === 0 && (
+        <EmptyCard
+          icon={<LuPenTool size={100} />}
+          message="Welcome you are the first user of the system and there are no polls yet. Start by creating the first poll"
+          linkText="Create Poll"
+          goTo={"/create-poll"}
+        />
+      )}
+      {polls?.map((poll) => (
         <PollCard
           key={poll.id}
           pollId={poll.id}

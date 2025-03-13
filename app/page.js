@@ -4,12 +4,13 @@ import { getUser } from "@/lib/dal";
 import { getAllPolls } from "@/query";
 
 export default async function Home() {
-  const  user  = await getUser();
-  const { polls, stats } = await getAllPolls({});
+  const user = await getUser();
+  const { stats, polls } = await getAllPolls({});
+
 
   return (
     <DashboardLayout user={user} stats={stats}>
-      <HomeContent polls={polls} user={user} />
+      <HomeContent initialPolls={polls} user={user} />
     </DashboardLayout>
   );
 }

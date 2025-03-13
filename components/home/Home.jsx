@@ -1,43 +1,31 @@
 "use client";
 
-import { getAllPolls } from "@/query";
-import { useEffect, useState } from "react";
+import { fetchFilteredPolls } from "@/query";
+import { useState, useTransition } from "react";
 import HeaderWithFilter from "../layout/HeaderWithFilter";
 import PollCard from "../PollCards/PollCard";
 
-const HomeContent = ({ user }) => {
-  const [allPolls, setAllPolls] = useState([]);
-  const [stats, setStats] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
+const HomeContent = ({ user, initialPolls }) => {
+  const [polls, setPolls] = useState(initialPolls);
   const [filterType, setFilterType] = useState("");
-  const fetchAllPolls = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const response = await getAllPolls({});
-      setAllPolls(response.polls);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  const [isPending, startTransition] = useTransition();
+
+  const handleFilterChange = (newFilter) => {
+    setFilterType(newFilter);
+    startTransition(async () => {
+      const filteredData = await fetchFilteredPolls(user, newFilter);
+      setPolls(filteredData.polls);
+    });
   };
-  useEffect(() => {
-    // setPage(1);
-    fetchAllPolls();
-    return () => {};
-  }, [filterType]);
 
   return (
     <div className="my-5 mx-auto">
       <HeaderWithFilter
-        title="Poll"
+        title="All Polls"
         filterType={filterType}
-        setFilterType={setFilterType}
+        setFilterType={handleFilterChange}
       />
-      {allPolls?.map((poll) => (
+      {polls?.map((poll) => (
         <PollCard
           key={poll.id}
           pollId={poll.id}

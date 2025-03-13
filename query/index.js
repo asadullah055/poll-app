@@ -231,34 +231,6 @@ export async function getBookmarkedPolls(id) {
     return [];
   }
 }
-
-/* export async function getBookmarkedPolls(id) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id },
-      select: {
-        bookmarkedPolls: true, 
-      },
-    });
-
-    if (!user) {
-      return { message: "User not found" };
-    }
-
-    const polls = await prisma.poll.findMany({
-      where: {
-        id: { in: user.bookmarkedPolls },
-      },
-      include: {
-        creator: {
-          select: { fullname: true, profileImage: true, username: true },
-        },
-      },
-    });
-    
-    return {polls: updatedPolls};
-  } catch (error) {
-    console.error("Error fetching bookmarked polls:", error);
-    return [];
-  }
-} */
+export async function fetchFilteredPolls(user, filterType) {
+  return await getAllPolls({ user, type: filterType });
+}

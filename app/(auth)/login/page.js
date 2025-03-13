@@ -16,7 +16,6 @@ const LoginPage = () => {
   });
   const [state, action, pending] = useActionState(login, undefined);
 
-
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
     setFormData((prev) => ({
@@ -30,6 +29,7 @@ const LoginPage = () => {
       setFormData({
         email: "",
         password: "",
+        remember: false,
       });
       router.push("/");
     } else if (state?.errors?.auth) {
@@ -37,7 +37,7 @@ const LoginPage = () => {
     } else if (state?.errors?.server) {
       toast.error(state.errors.server);
     }
-  }, [state,router]);
+  }, [state, router]);
 
   return (
     <div className="bg-white p-4 rounded-md">
@@ -51,7 +51,7 @@ const LoginPage = () => {
         action={() =>
           action({
             ...formData,
-            remember: formData.remember || false, 
+            remember: formData.remember || false,
           })
         }
       >

@@ -5,7 +5,6 @@ import { loginSchema, userSchema } from "@/lib/definitions";
 import { createSession, deleteSession } from "@/lib/session";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { redirect } from "next/navigation";
 const prisma = new PrismaClient();
 export async function signup(state, formData) {
   const validatedFields = userSchema.safeParse(formData);
@@ -84,7 +83,6 @@ export async function login(state, formData) {
       where: { email: email },
     });
 
-
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return { errors: { auth: ["Invalid email or password"] } };
     }
@@ -92,9 +90,9 @@ export async function login(state, formData) {
     const totalPollsCreated = await prisma.poll.count({
       where: { createById: user.id },
     });
-    
+
     const totalPollsVote = await prisma.poll.count({
-      where: { votersId: { has: user.id } }, 
+      where: { votersId: { has: user.id } },
     });
 
     const totalBookmarkedPolls = user.bookmarkedPolls.length;
@@ -116,31 +114,8 @@ export async function login(state, formData) {
   }
 }
 
-/* export async function userInfo (id) {
-  const user = await prisma.user.findUnique({where:id},);
-  if (!user) {
-    return res.status(400).json({ message: "user not found" });
-  }
-  const totalPollsCreated = await Poll.countDocuments({ creator: user._id });
-  const totalPollsVote = await Poll.countDocuments({ voters: user._id });
-  const totalBookmarkedPolls = user.bookmarkedPolls.length;
-  try {
-    const userInfo = {
-      ...user.toObject(),
-      totalPollsCreated,
-      totalPollsVote,
-      totalBookmarkedPolls,
-    };
-    res.status(200).json(userInfo);
-  } catch (err) {
-    res.status(500).json({
-      message: "Error login user",
-      error: err.message,
-    });
-  }
-}; */
 
 export async function logout() {
   await deleteSession();
-  redirect("/login");
+  return { message: "Logout Success" };
 }

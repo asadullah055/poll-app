@@ -10,14 +10,22 @@ export default async function middleware(req) {
   const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
   const path = req.nextUrl.pathname;
 
-  const isProtectedRoute = ["/"].includes(path);
+  const isProtectedRoute = [
+    "/",
+    "/create-poll",
+    "/bookmarked-poll",
+    "/my-polls",
+    "/voted-polls",
+  ].includes(path);
   const isPublicRoute = ["/login", "/signup"].includes(path);
 
   try {
     if (accessToken) {
       const secretKey = new TextEncoder().encode(ACCESS_SECRET);
       const { payload } = await jwtVerify(accessToken, secretKey);
-   
+      if (!payload?.userId) {
+        throw new Error("Invalid token payload");
+      }
       if (isPublicRoute && payload?.userId) {
         return NextResponse.redirect(new URL("/", req.url));
       }

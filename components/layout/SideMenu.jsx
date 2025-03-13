@@ -3,6 +3,7 @@ import { logout } from "@/action/auth";
 import { MENU_DATA } from "@/lib/data";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const SideMenu = () => {
   const router = useRouter();
@@ -10,10 +11,11 @@ const SideMenu = () => {
 
   const handleClick = async (route) => {
     if (route === "/logout") {
-      await logout();
-      return;
+      const user = await logout();
+      toast.success(user.message);
+      router.push("/login");
     }
-    router.push(route);
+    // router.push(route);
   };
 
   return (
@@ -35,7 +37,7 @@ const SideMenu = () => {
             href={item.path}
             prefetch={true}
             className={`flex w-full items-center gap-4 text-[15px] py-4 px-6 mb-3 rounded-full transition-colors ${
-              isActive ? "bg-blue-500 text-white" : "hover:bg-gray-200"
+              isActive ? "bg-primary text-white" : "hover:bg-gray-200"
             }`}
           >
             <item.icon className="text-xl" /> {item.label}

@@ -1,8 +1,20 @@
+import { CiBookmark } from "react-icons/ci";
+import EmptyCard from "../cards/EmptyCard";
 import PollCard from "../PollCards/PollCard";
 
 const BookmarkPollContent = ({ user, polls }) => {
+  console.log(polls.length);
+
   return (
     <div className="my-5 mx-auto">
+      {polls.length === 0 && (
+        <EmptyCard
+          icon={<CiBookmark size={100} />}
+          message="You have't bookmarked any polls yet, Start bookmarking your favourites to keep track of them"
+          linkText="Home Page"
+          goTo={"/"}
+        />
+      )}
       {polls?.map((poll) => {
         if (!user.user?.bookmarkedPolls?.includes(poll.id)) return null;
         return (

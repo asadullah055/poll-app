@@ -1,8 +1,18 @@
+import { HiOutlineCheckBadge } from "react-icons/hi2";
+import EmptyCard from "../cards/EmptyCard";
 import PollCard from "../PollCards/PollCard";
 
 const VotePollContent = ({ polls, user }) => {
   return (
     <>
+      {polls.length === 0 && (
+        <EmptyCard
+          icon={<HiOutlineCheckBadge size={100} />}
+          message="You have not voted on any polls yet! Start exploring and share your option by voting on polls now"
+          linkText="Explore Now"
+          goTo={"/"}
+        />
+      )}
       {polls.map((poll) => (
         <PollCard
           key={`dashboard_${poll.id}`}

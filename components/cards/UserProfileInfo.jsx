@@ -1,11 +1,14 @@
 import moment from "moment";
+import Image from "next/image";
 const UserProfileInfo = ({ imgUrl, fullname, username, createdAt }) => {
   return (
     <div className="flex items-center gap-4">
       {imgUrl && (
-        <img
+        <Image
           src={imgUrl}
           alt={fullname || "User Profile"}
+          width={200}
+          height={200}
           className="w-10 h-10 rounded-full border-none"
         />
       )}

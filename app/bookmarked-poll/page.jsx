@@ -8,6 +8,7 @@ const BookmarkedPolls = async () => {
   const { polls } = await getBookmarkedPolls(user?.user?.id);
   return (
     <DashboardLayout user={user}>
+      <h2 className="text-xl font-medium text-black mt-2">Bookmarks Polls</h2>
       <BookmarkPollContent polls={polls} user={user} />
     </DashboardLayout>
   );
