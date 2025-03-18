@@ -3,7 +3,7 @@
 const TreadingPolls = (props) => {
   //   const [stats, setStats] = useState([]);
   return (
-    <div className="bg-slate-100/50 rounded-lg mt-6 overflow-hidden sticky top-[80px] p-5">
+    <div className="bg-slate-100/50  rounded-lg mt-6 overflow-hidden sticky top-[80px] p-5">
       <h6 className="text-sm text-black font-medium">Treading</h6>
       <div className="mt-4">
         {props.stats.map((item, index) => (

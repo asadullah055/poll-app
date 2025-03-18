@@ -11,7 +11,7 @@ const ProfilePhotoSelector = ({ profileImage, setImage }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file); // Send the file directly to the parent
+      setImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
@@ -40,7 +40,7 @@ const ProfilePhotoSelector = ({ profileImage, setImage }) => {
           <LuUser className="text-4xl text-primary" />
           <button
             type="button"
-            className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-full absolute -bottom-1 -right-1"
+            className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full absolute -bottom-1 -right-1"
             onClick={onChooseFile}
           >
             <LuUpload />

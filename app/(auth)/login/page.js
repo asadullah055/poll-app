@@ -40,7 +40,7 @@ const LoginPage = () => {
   }, [state, router]);
   useEffect(() => {
     router.prefetch("/");
-  }, []);
+  }, [router]);
   return (
     <div className="bg-white p-4 rounded-md">
       <h2 className="text-2xl mb-3 font-semibold p-2 rounded text-center">
@@ -98,7 +98,7 @@ const LoginPage = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 w-full text-white rounded-md px-7 py-2 mb-3 cursor-pointer"
+          className="bg-primary w-full text-white rounded-md px-7 py-2 mb-3 cursor-pointer"
           disabled={pending}
         >
           {pending ? <Loading text="Login ..." /> : "Login"}

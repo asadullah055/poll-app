@@ -124,7 +124,7 @@ const PollCard = ({
   return (
     !pollDeleted && (
       <div className="bg-slate-100/50 my-5 p-5 rounded-lg border border-slate-100 mx-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex md:items-center justify-between flex-col md:flex-row gap-2">
           <UserProfileInfo
             imgUrl={creatorProfileImg}
             fullname={creatorName}
@@ -146,8 +146,10 @@ const PollCard = ({
             onDelete={deletePoll}
           />
         </div>
-        <div className="ml-14 mt-3">
-          <p className="text-[15px] text-black leading-8">{question}</p>
+        <div className="ml-5 md:ml-14 mt-3">
+          <p className="text-[15px]  leading-5 font-semibold text-primary">
+            {question}
+          </p>
           <div className="mt-4">
             {isVoteComplete || isPollClosed ? (
               <PollingResultContent

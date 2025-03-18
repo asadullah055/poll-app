@@ -6,14 +6,14 @@ import TreadingPolls from "./TreadingPolls";
 const DashboardLayout = async ({ children, user, stats }) => {
   return (
     <div>
-      <Navbar />
+      <Navbar user={user} />
       {user && (
-        <div className="flex">
-          <div className="max-[1080px]:hidden">
+        <div className="flex justify-between">
+          <div className="hidden md:block">
             <SideMenu />
           </div>
           <div className="grow mx-5">{children}</div>
-          <div className="hidden md:block mr-5">
+          <div className="hidden lg:block mr-5 min-w-[300px]">
             <UserDetailsCard
               profileImageUrl={user.user?.profileImage}
               fullName={user.user?.fullname}

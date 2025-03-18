@@ -18,7 +18,7 @@ const UserDetailsCard = ({
   totalPollsVote,
 }) => {
   return (
-    <div className="bg-slate-100/50 rounded-lg mt-16 overflow-hidden">
+    <div className="bg-slate-100/50 rounded-lg mt-16 overflow-hidden ">
       <div className="w-full h-32 flex justify-center bg-primary relative">
         <div className="absolute -bottom-10 rounded-full overflow-hidden border-2 border-primary">
           {

@@ -114,7 +114,7 @@ const Signup = () => {
         )}
         <button
           type="submit"
-          className="bg-blue-500 w-full text-white rounded-md px-7 py-2 mb-3 mt-2 cursor-pointer"
+          className="bg-primary w-full text-white rounded-md px-7 py-2 mb-3 mt-2 cursor-pointer"
           disabled={pending}
         >
           {pending ? <Loading text="Creating Account ..." /> : "Create Account"}

@@ -9,7 +9,7 @@ const UserProfileInfo = ({ imgUrl, fullname, username, createdAt }) => {
           alt={fullname || "User Profile"}
           width={200}
           height={200}
-          className="w-10 h-10 rounded-full border-none"
+          className="w-10 h-10 rounded-full border-2 border-primary"
         />
       )}
       <div>
