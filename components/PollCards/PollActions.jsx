@@ -50,7 +50,7 @@ const PollActions = ({
         </button>
       )}
 
-      <button className="icon-btn" onClick={toggleBookmark}>
+      <button title="Bookmark" className="icon-btn" onClick={toggleBookmark}>
         {isBookmarked ? (
           <FaBookmark className="text-primary" />
         ) : (

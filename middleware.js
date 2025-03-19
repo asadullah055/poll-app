@@ -16,6 +16,7 @@ export default async function middleware(req) {
     "/bookmarked-poll",
     "/my-polls",
     "/voted-polls",
+    "/profile",
   ].includes(path);
   const isPublicRoute = ["/login", "/signup"].includes(path);
 

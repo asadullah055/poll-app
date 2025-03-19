@@ -140,7 +140,7 @@ const PollForm = () => {
       <button
         disabled={pending}
         type="submit"
-        className="btn-primary py-2 mt-6"
+        className="btn-primary py-2 mt-6 cursor-pointer"
       >
         {pending ? <Loading text="Creating ..." /> : "Create Poll"}
       </button>

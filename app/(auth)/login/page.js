@@ -25,8 +25,9 @@ const LoginPage = () => {
   };
   useEffect(() => {
     if (state?.success) {
-      router.push("/");
       toast.success(state?.message);
+      router.push("/");
+      router.refresh();
       setFormData({
         email: "",
         password: "",
@@ -80,17 +81,6 @@ const LoginPage = () => {
           <p className="text-xs text-red-600">{state.errors.password}</p>
         )}
         <div className="flex justify-end items-center pb-3">
-          {/* <div className="flex  gap-2 mb-3 items-center mt-3 ">
-            <input
-              className="px-3 py-2 outline-none border border-gray-700 bg-transparent rounded-md  focus:border-gray-500 overflow-hidden w-4 h-4"
-              type="checkbox"
-              name="remember"
-              id="remember"
-              checked={formData.remember}
-              onChange={handleChange}
-            />
-            <label htmlFor="remember">Remember me</label>
-          </div> */}
           <Link href="/forget-password" className="text-blue-600">
             Forgot Password
           </Link>

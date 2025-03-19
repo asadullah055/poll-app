@@ -14,6 +14,7 @@ const SideMenu = () => {
       const user = await logout();
       toast.success(user.message);
       router.push("/login");
+      router.refresh();
     }
     // router.push(route);
   };

@@ -1,7 +1,6 @@
-"use client";
+import { formateNumber } from "@/helper/numberFormater";
 
 const TreadingPolls = (props) => {
-  //   const [stats, setStats] = useState([]);
   return (
     <div className="bg-slate-100/50  rounded-lg mt-6 overflow-hidden sticky top-[80px] p-5">
       <h6 className="text-sm text-black font-medium">Treading</h6>
@@ -13,7 +12,7 @@ const TreadingPolls = (props) => {
           >
             <p className="text-sm text-slate-900">{item.label}</p>
             <span className="text-xs text-slate-600 rounded py-[2px] px-4">
-              {item.count}
+              {formateNumber(item.count)}
             </span>
           </div>
         ))}

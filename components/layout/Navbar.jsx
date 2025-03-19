@@ -1,5 +1,6 @@
 "use client";
 import { logout } from "@/action/auth";
+import { formateNumber } from "@/helper/numberFormater";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ const Navbar = ({ user }) => {
     const user = await logout();
     toast.success(user.message);
     router.push("/login");
+    router.refresh();
   };
 
   // Close openProfile when clicking outside
@@ -100,15 +102,15 @@ const Navbar = ({ user }) => {
               <div className="mt-3">
                 <h3 className="text-sm text-black mt-2">
                   <span className="font-medium">Polls Created:</span>{" "}
-                  {user.totalPollsCreated || 0}
+                  {formateNumber(user.totalPollsCreated || 0)}
                 </h3>
                 <h3 className="text-sm text-black mt-2">
                   <span className="font-medium">Polls Voted:</span>{" "}
-                  {user?.totalPollsVote || 0}
+                  {formateNumber(user?.totalPollsVote || 0)}
                 </h3>
                 <h3 className="text-sm text-black mt-2">
                   <span className="font-medium">Polls Bookmarked:</span>{" "}
-                  {user?.totalBookmarkedPolls || 0}
+                  {formateNumber(user?.totalBookmarkedPolls || 0)}
                 </h3>
               </div>
 
