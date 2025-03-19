@@ -1,7 +1,14 @@
 "use server";
 
 import cloudinary from "@/lib/cloudinary";
-import { loginSchema, passwordSchema, userSchema } from "@/lib/definitions";
+import {
+  loginSchema,
+  passwordSchema,
+  resetPasswordSchema,
+  userSchema,
+} from "@/lib/definitions";
+import { emailBody } from "@/lib/emailBody";
+import { sendEmail } from "@/lib/emailUtills";
 import { createSession, deleteSession } from "@/lib/session";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -140,7 +147,7 @@ export async function updatePassword(state, formData) {
 
 export async function updateProfileImage(email, file) {
   let profileImageUrl = null;
-  
+
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -148,7 +155,7 @@ export async function updateProfileImage(email, file) {
     const arrayBuffer = await file.arrayBuffer();
     const base64String = Buffer.from(arrayBuffer).toString("base64");
     const dataUri = `data:${file.type};base64,${base64String}`;
-    
+
     const uploadResponse = await cloudinary.uploader.upload(dataUri, {
       folder: "poll_app",
     });
@@ -159,14 +166,101 @@ export async function updateProfileImage(email, file) {
       where: { email },
       data: { profileImage: profileImageUrl },
     });
-    revalidatePath('/profile')
+    revalidatePath("/profile");
 
     return { success: true, message: "Update Image Success", profileImageUrl };
   } catch (error) {
     return { success: false, errors: "Image update failed" };
   }
 }
+export async function sendOtp(email) {
+  try {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    });
+    await sendEmail(
+      user.email,
+      emailBody(user.fullname, otp),
+      "Reset Password Verification"
+    );
 
+    await prisma.user.update({
+      where: { email: email },
+      data: {
+        otp: otp.toString(),
+      },
+    });
+    const expireTime = Date.now() + 2 * 60 * 1000;
+    return {
+      success: true,
+      message: "Email send success",
+      expireTime: expireTime.toString(),
+    };
+  } catch (error) {
+    return { success: false, message: "Somethings went wrong" };
+  }
+}
+export async function verifyOtp(email, otp) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+      select: { otp: true, updatedAt: true },
+    });
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+    const otpExpiry = new Date(user.updatedAt.getTime() + 2 * 60 * 1000);
+    const currentTime = new Date();
+    if (currentTime > otpExpiry) {
+      return { success: false, message: "OTP has expired" };
+    }
+    if (user.otp !== otp) {
+      return { success: false, message: "Invalid OTP" };
+    }
+
+    await prisma.user.update({
+      where: { email: email },
+      data: { otp: "0" },
+    });
+
+    return { success: true, message: "OTP verification successful" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Something went wrong" };
+  }
+}
+export async function resetPassword(state, formData) {
+  const validatedFields = resetPasswordSchema.safeParse(formData);
+  console.log(validatedFields.data);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+  try {
+    const { newPassword, email } = validatedFields.data;
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+      select: { password: true },
+    });
+    if (!user) {
+      return { success: false, message: "User not found" };
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { email: email },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true, message: "Reset Password success" };
+  } catch (error) {
+    console.log(error);
+
+    return { success: false, message: "Something went wrong" };
+  }
+}
 
 export async function logout() {
   await deleteSession();
