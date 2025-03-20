@@ -26,13 +26,14 @@ const LoginPage = () => {
   useEffect(() => {
     if (state?.success) {
       toast.success(state?.message);
-      router.push("/");
-      router.refresh();
+
       setFormData({
         email: "",
         password: "",
         remember: false,
       });
+      router.push("/");
+      router.refresh();
     } else if (state?.errors?.auth) {
       toast.error(state.errors.auth);
     } else if (state?.errors?.server) {

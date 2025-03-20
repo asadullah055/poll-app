@@ -5,7 +5,7 @@ import ProfilePhotoSelector from "@/components/Auth/ProfilePhotoSelector";
 import Loading from "@/components/Loading";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Signup = () => {
@@ -21,26 +21,26 @@ const Signup = () => {
   const router = useRouter();
   const [state, action, pending] = useActionState(signup, undefined);
 
-  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleProfileImageChange = (file) => {
     setFormData((prev) => ({ ...prev, profileImage: file }));
   };
-
-  if (state?.success) {
-    toast.success(state?.message);
-    setFormData({
-      fullname: "",
-      email: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      profileImage: null,
-    });
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (state?.success) {
+      toast.success(state?.message);
+      setFormData({
+        fullname: "",
+        email: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+        profileImage: null,
+      });
+      router.push("/login");
+    }
+  }, [state, router]);
 
   return (
     <div className="bg-white p-4 rounded-md">
